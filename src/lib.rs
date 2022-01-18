@@ -9,20 +9,66 @@ pub mod error {
 /// SIFIS Hazard Label
 ///
 /// Describes a possible hazard.
-// TODO: Support range
-pub struct Label {}
+///
+/// A risk score can *only* assume values in the range [0, 10]. Values outside
+/// of the defined range are invalid.
+#[derive(Clone)]
+pub struct Label {
+    name: String,
+    description: String,
+    risk_score: Option<usize>,
+}
+
+impl Label {
+    pub fn has_valid_risk_score(&self) -> bool {
+        self.risk_score.map_or(false, |v| (0..11).contains(&v))
+    }
+}
 
 pub trait WithLabel {
     fn has_label(&self, label: &Label) -> bool;
 }
 
-pub enum Op {}
+#[derive(Clone)]
+pub enum Op {
+    ReadProperty,
+    WriteProperty,
+    ObserveProperty,
+    UnobserveProperty,
+    InvokeAction,
+    SubscribeEvent,
+    UnsubscribeEvent,
+    ReadAllProperties,
+    WriteAllProperties,
+    ReadMultipleProperties,
+    WriteMultipleProperties,
+}
 
+#[derive(Clone)]
+pub enum SubProtocol {
+    Longpoll,
+    Websub,
+    Sse,
+}
+
+#[derive(Clone)]
+pub struct ExpectedResponse {
+    contentType: String,
+}
+
+#[derive(Clone)]
 pub struct Form {
     op: Vec<Op>,
     href: Url,
+    contentType: String,
+    contentCoding: Option<String>,
+    subprotocol: Option<SubProtocol>,
+    security: Option<Vec<String>>,
+    scopes: Option<Vec<String>>,
+    response: Option<ExpectedResponse>,
 }
 
+#[derive(Clone)]
 pub struct Affordance {
     label: Vec<Label>,
     title: String,
@@ -30,19 +76,23 @@ pub struct Affordance {
     forms: Vec<Form>,
 }
 
+#[derive(Clone)]
 pub struct Property {
     inner: Affordance,
 }
 
+#[derive(Clone)]
 pub struct Action {
     inner: Affordance,
 }
 
+#[derive(Clone)]
 pub struct Event {
     inner: Affordance,
 }
 
 /// Connected thing
+#[derive(Clone)]
 pub struct Thing {
     properties: HashMap<String, Property>,
     actions: HashMap<String, Action>,
@@ -61,46 +111,20 @@ impl Thing {
     }
 }
 
-/// Store here pre-defined constraints
-/// to the access to SIFIS-Home
-#[derive(Debug)]
-struct Restrictions {}
-
 /// Point of truth to access Things as consumer
-#[derive(Debug)]
 pub struct Context {
-    restrictions: Restrictions,
-}
-
-impl Default for Context {
-    fn default() -> Self {
-        Context {
-            restrictions: Restrictions {},
-        }
-    }
-}
-
-pub struct ThingsIter {}
-
-impl Iterator for ThingsIter {
-    type Item = Thing;
-
-    fn next(&mut self) -> Option<Thing> {
-        todo!()
-    }
+    things: Vec<Thing>,
 }
 
 impl Context {
-    fn things() -> ThingsIter {
-        todo!()
+    /// Creates a new Context composed by a series of Thing.
+    pub fn new(things: &[Thing]) -> Self {
+        Self {
+            things: things.to_owned(),
+        }
     }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    /// Returns an Iterator over the Thing.
+    pub fn things(&self) -> impl Iterator<Item = &Thing> {
+        self.things.iter()
     }
 }
