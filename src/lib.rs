@@ -1,5 +1,5 @@
 mod discovery;
-mod label;
+mod hazard;
 mod thing;
 
 pub mod error {
@@ -7,5 +7,5 @@ pub mod error {
 }
 
 pub use discovery::*;
-pub use label::*;
+pub use hazard::*;
 pub use thing::*;

@@ -2,27 +2,56 @@ use std::collections::HashMap;
 
 use serde::Deserialize;
 
-use crate::label::Label;
+use crate::hazard::Hazard;
+
+type MultiLanguage = HashMap<String, String>;
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct DataSchema {
+    #[serde(rename = "@type")]
+    pub attype: Option<String>,
+    pub title: Option<String>,
+    pub titles: Option<MultiLanguage>,
+    pub description: Option<String>,
+    pub descriptions: Option<MultiLanguage>,
+    pub r#type: Option<String>,
+    pub r#const: Option<serde_json::Value>,
+    pub unit: Option<String>,
+    #[serde(rename = "oneOf")]
+    pub one_of: Option<Vec<DataSchema>>,
+    pub r#enum: Option<Vec<serde_json::Value>>,
+    #[serde(rename = "ReadOnly")]
+    pub read_only: Option<String>,
+    #[serde(rename = "WriteOnly")]
+    pub write_only: Option<String>,
+    pub format: Option<String>,
+    pub hazards: Option<Hazard>,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+pub struct IntegerSchema {
+    #[serde(flatten)]
+    pub data_schema: DataSchema,
     pub maximum: Option<usize>,
     pub minimum: Option<usize>,
-    pub title: Option<String>,
-    pub r#type: Option<String>,
-    pub unit: Option<String>,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+pub struct ObjectSchema {
+    #[serde(flatten)]
+    pub data_schema: DataSchema,
+    pub properties: Option<HashMap<String, IntegerSchema>>,
+    pub required: Vec<String>,
 }
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct Affordance {
-    /*#[serde(default, rename = "sifis:hazard")]
-    hazard: serde_json::Value,*/
     #[serde(rename = "@type")]
     pub attype: Option<String>,
     pub description: Option<String>,
+    pub titles: Option<MultiLanguage>,
     #[serde(rename = "links")]
     pub forms: Vec<Form>,
-    pub titles: Option<HashMap<String, String>>,
     pub descriptions: Option<HashMap<String, String>>,
 }
 
@@ -30,6 +59,9 @@ pub struct Affordance {
 pub struct Property {
     #[serde(flatten)]
     pub affordance: Affordance,
+    // FIXME: Need to understand which subclasses
+    #[serde(flatten)]
+    pub schema: IntegerSchema,
     pub observable: Option<bool>,
 }
 
@@ -37,8 +69,9 @@ pub struct Property {
 pub struct Action {
     #[serde(flatten)]
     pub affordance: Affordance,
-    pub input: Option<DataSchema>,
-    pub output: Option<DataSchema>,
+    // FIXME: Need to understand which subclasses
+    pub input: Option<ObjectSchema>,
+    pub output: Option<ObjectSchema>,
     #[serde(default)]
     pub safe: bool,
     #[serde(default)]
@@ -70,7 +103,7 @@ pub struct Form {
 #[derive(Clone, Debug, Deserialize)]
 pub struct Thing {
     #[serde(rename = "@context")]
-    pub context: String,
+    pub context: Vec<HashMap<String, String>>,
     pub title: String,
     #[serde(rename = "@type")]
     pub attype: Vec<String>,
