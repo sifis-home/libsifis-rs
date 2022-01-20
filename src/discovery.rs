@@ -1,6 +1,5 @@
 use anyhow::Result;
-use crossbeam_channel::Receiver;
-use mdns_sd::{ServiceDaemon, ServiceEvent, ServiceInfo};
+use mdns_sd::{Receiver, ServiceDaemon, ServiceEvent, ServiceInfo};
 use reqwest::blocking;
 
 use crate::Thing;
