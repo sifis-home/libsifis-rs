@@ -38,6 +38,12 @@ impl Iterator for Iter {
     }
 }
 
+impl Default for Context {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Context {
     /// Creates a new Context composed by a series of Thing.
     pub fn new() -> Self {
@@ -45,7 +51,7 @@ impl Context {
         Self { mdns }
     }
     /// Returns an Iterator over the discovered things
-    pub fn things<'a>(&'a self) -> impl Iterator<Item = Result<Thing>> {
+    pub fn things(&self) -> impl Iterator<Item = Result<Thing>> {
         let service_type = "_webthing._tcp.local.";
         let receiver = self.mdns.browse(service_type).expect("Failed to browse");
 

@@ -194,13 +194,13 @@ pub struct Thing {
 }
 
 impl Thing {
-    pub fn properties<'s>(&self) -> impl Iterator<Item = (&String, &Property)> {
+    pub fn properties(&self) -> impl Iterator<Item = (&String, &Property)> {
         self.properties.iter()
     }
-    pub fn actions<'s>(&self) -> impl Iterator<Item = (&String, &Action)> {
+    pub fn actions(&self) -> impl Iterator<Item = (&String, &Action)> {
         self.actions.iter()
     }
-    pub fn events<'s>(&self) -> impl Iterator<Item = (&String, &Event)> {
+    pub fn events(&self) -> impl Iterator<Item = (&String, &Event)> {
         self.events.iter()
     }
 }
