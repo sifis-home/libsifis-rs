@@ -29,5 +29,7 @@ $ cargo run --example ls
 - [ ] Write the Thing-focused API
 - [ ] Write more usage examples
 - [ ] Use thiserror instead of anyhow (once we can reason on what can go wrong)
+- [ ] webthings-set
+- [ ] webthings-get
 
 
