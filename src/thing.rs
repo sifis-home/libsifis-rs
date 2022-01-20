@@ -1,10 +1,74 @@
 use std::collections::HashMap;
 
-use serde::Deserialize;
+use serde::de::DeserializeOwned;
+use serde::{Deserialize, Deserializer};
+use serde_json::Value;
 
 use crate::hazard::Hazard;
 
 type MultiLanguage = HashMap<String, String>;
+type DataSchemaMap = HashMap<String, SchemaType>;
+type SecuritySchemeMap = HashMap<String, SecurityScheme>;
+
+#[derive(Clone, Debug)]
+pub enum OneOrMany<T>
+where
+    T: DeserializeOwned,
+{
+    One(T),
+    Many(Vec<T>),
+}
+
+impl<'de, T> Deserialize<'de> for OneOrMany<T>
+where
+    T: DeserializeOwned,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let temp = Value::deserialize(deserializer)?;
+        if let Value::Array(v) = temp {
+            let mut temp = Vec::with_capacity(v.len());
+            for t in v {
+                temp.push(serde_json::from_value(t).map_err(serde::de::Error::custom)?);
+            }
+            Ok(OneOrMany::Many(temp))
+        } else {
+            Ok(OneOrMany::One(
+                serde_json::from_value(temp).map_err(serde::de::Error::custom)?,
+            ))
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum SchemaType {
+    IntegerSchema(IntegerSchema),
+    ObjectSchema(ObjectSchema),
+}
+
+impl<'de> Deserialize<'de> for SchemaType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let temp = Value::deserialize(deserializer)?;
+        if let Value::Object(v) = &temp {
+            if v.contains_key("minimum") {
+                Ok(SchemaType::IntegerSchema(
+                    serde_json::from_value(temp).map_err(serde::de::Error::custom)?,
+                ))
+            } else {
+                Ok(SchemaType::ObjectSchema(
+                    serde_json::from_value(temp).map_err(serde::de::Error::custom)?,
+                ))
+            }
+        } else {
+            Err("Error parsing DataSchema").map_err(serde::de::Error::custom)
+        }
+    }
+}
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct DataSchema {
@@ -15,11 +79,11 @@ pub struct DataSchema {
     pub description: Option<String>,
     pub descriptions: Option<MultiLanguage>,
     pub r#type: Option<String>,
-    pub r#const: Option<serde_json::Value>,
+    pub r#const: Option<Value>,
     pub unit: Option<String>,
     #[serde(rename = "oneOf")]
-    pub one_of: Option<Vec<DataSchema>>,
-    pub r#enum: Option<Vec<serde_json::Value>>,
+    pub one_of: Option<Vec<SchemaType>>,
+    pub r#enum: Option<Vec<Value>>,
     #[serde(rename = "ReadOnly")]
     pub read_only: Option<String>,
     #[serde(rename = "WriteOnly")]
@@ -40,28 +104,30 @@ pub struct IntegerSchema {
 pub struct ObjectSchema {
     #[serde(flatten)]
     pub data_schema: DataSchema,
-    pub properties: Option<HashMap<String, IntegerSchema>>,
-    pub required: Vec<String>,
+    pub properties: Option<DataSchemaMap>,
+    pub required: Option<Vec<String>>,
 }
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct Affordance {
     #[serde(rename = "@type")]
-    pub attype: Option<String>,
-    pub description: Option<String>,
+    pub attype: Option<OneOrMany<String>>,
+    pub title: Option<String>,
     pub titles: Option<MultiLanguage>,
+    pub description: Option<String>,
+    pub descriptions: Option<MultiLanguage>,
     #[serde(rename = "links")]
     pub forms: Vec<Form>,
-    pub descriptions: Option<HashMap<String, String>>,
+    #[serde(rename = "uriVariables")]
+    pub uri_variables: Option<DataSchemaMap>,
 }
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct Property {
     #[serde(flatten)]
     pub affordance: Affordance,
-    // FIXME: Need to understand which subclasses
     #[serde(flatten)]
-    pub schema: IntegerSchema,
+    pub schema: SchemaType,
     pub observable: Option<bool>,
 }
 
@@ -69,9 +135,8 @@ pub struct Property {
 pub struct Action {
     #[serde(flatten)]
     pub affordance: Affordance,
-    // FIXME: Need to understand which subclasses
-    pub input: Option<ObjectSchema>,
-    pub output: Option<ObjectSchema>,
+    pub input: Option<SchemaType>,
+    pub output: Option<SchemaType>,
     #[serde(default)]
     pub safe: bool,
     #[serde(default)]
@@ -89,10 +154,18 @@ pub struct Event {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct SecurityScheme {
+    // FIXME Update with new security scheme
     #[serde(flatten)]
     pub scheme: HashMap<String, String>,
 }
 
+#[derive(Clone, Debug, Deserialize)]
+pub struct Link {
+    pub href: String,
+    pub rel: String,
+}
+
+// FIXME Update Form definition
 #[derive(Clone, Debug, Deserialize)]
 pub struct Form {
     pub href: String,
@@ -102,21 +175,22 @@ pub struct Form {
 /// Connected thing
 #[derive(Clone, Debug, Deserialize)]
 pub struct Thing {
+    // FIXME Context is wrong, it is an URI or an Array
     #[serde(rename = "@context")]
     pub context: Vec<HashMap<String, String>>,
-    pub title: String,
     #[serde(rename = "@type")]
-    pub attype: Vec<String>,
+    pub attype: Option<OneOrMany<String>>,
+    pub title: String,
     pub description: String,
     pub base: String,
-    pub security: String,
-    #[serde(rename = "securityDefinitions")]
-    pub security_definition: HashMap<String, SecurityScheme>,
-    #[serde(rename = "links")]
-    pub forms: Vec<Form>,
+    pub links: Option<Vec<Link>>,
+    pub forms: Option<Vec<Form>>,
     properties: HashMap<String, Property>,
     actions: HashMap<String, Action>,
     events: HashMap<String, Event>,
+    pub security: Option<OneOrMany<String>>,
+    #[serde(rename = "securityDefinitions")]
+    pub security_definitions: SecuritySchemeMap,
 }
 
 impl Thing {
