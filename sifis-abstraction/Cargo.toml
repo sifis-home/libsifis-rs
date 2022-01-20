@@ -1,5 +1,5 @@
 [package]
-name = sifis-abstraction
+name = "sifis-abstraction"
 version = "0.1.0"
 edition = "2021"
 
