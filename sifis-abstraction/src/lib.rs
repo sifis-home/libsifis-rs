@@ -1,3 +1,32 @@
+/// Type of Hazards
+pub enum Hazards {
+    AirPoisoning,
+    Asphyxia,
+    AudioVideoRecordAndStore,
+    AudioVideoStream,
+    ElectricEnergyConsumption,
+    Explosion,
+    Financial,
+    FireHazard,
+    GasConsumption,
+    LogEnergyConsumption,
+    LogUsageTime,
+    PaySubscriptionFee,
+    PowerOutage,
+    PowerSurge,
+    Privacy,
+    RecordIssuedCommands,
+    RecordUserPreferences,
+    Safety,
+    SpendMoney,
+    SpoiledFood,
+    TakeDeviceScreenshots,
+    TakePictures,
+    UnauthorisedPhysicalAccess,
+    WaterConsumption,
+    WaterFlooding,
+}
+
 /// fire hazard
 /// The execution may cause fire
 pub fn turn_on_light() {
