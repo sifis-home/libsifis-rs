@@ -32,6 +32,9 @@ pub fn turn_on_light() {
 
 /// Fire hazard.
 /// The execution may cause fire.
+///
+/// Audio video stream.
+/// The execution authorises the app to obtain a video stream with audio.
 pub fn turn_on_oven() {
     todo!("Implement using the Wot API");
 }
