@@ -116,7 +116,6 @@ pub struct Affordance {
     pub titles: Option<MultiLanguage>,
     pub description: Option<String>,
     pub descriptions: Option<MultiLanguage>,
-    #[serde(rename = "links")]
     pub forms: Vec<Form>,
     #[serde(rename = "uriVariables")]
     pub uri_variables: Option<DataSchemaMap>,
@@ -165,28 +164,39 @@ pub struct Link {
     pub rel: String,
 }
 
-// FIXME Update Form definition
 #[derive(Clone, Debug, Deserialize)]
 pub struct Form {
     pub href: String,
-    pub rel: String,
+    #[serde(rename = "contentType", default = "default_content_type")]
+    pub content_type: String,
+    #[serde(rename = "contentCoding")]
+    pub content_coding: Option<String>,
+}
+
+fn default_content_type() -> String {
+    "application/json".to_string()
 }
 
 /// Connected thing
 #[derive(Clone, Debug, Deserialize)]
 pub struct Thing {
-    // FIXME Context is wrong, it is an URI or an Array
+    // The context can be arbitrarily complex
+    // https://www.w3.org/TR/json-ld11/#the-context
+    // Let's take a value for now and assume we'll use the json-ld crate later
     #[serde(rename = "@context")]
-    pub context: Vec<HashMap<String, String>>,
+    pub context: Value,
     #[serde(rename = "@type")]
     pub attype: Option<OneOrMany<String>>,
     pub title: String,
-    pub description: String,
-    pub base: String,
+    pub description: Option<String>,
+    pub base: Option<String>,
     pub links: Option<Vec<Link>>,
     pub forms: Option<Vec<Form>>,
+    #[serde(default = "HashMap::new")]
     properties: HashMap<String, Property>,
+    #[serde(default = "HashMap::new")]
     actions: HashMap<String, Action>,
+    #[serde(default = "HashMap::new")]
     events: HashMap<String, Event>,
     pub security: Option<OneOrMany<String>>,
     #[serde(rename = "securityDefinitions")]
@@ -202,5 +212,76 @@ impl Thing {
     }
     pub fn events(&self) -> impl Iterator<Item = (&String, &Event)> {
         self.events.iter()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn wot_example1() {
+        let ex1 = r#"
+        {
+            "@context": "https://www.w3.org/2019/wot/td/v1",
+            "id": "urn:dev:ops:32473-WoTLamp-1234",
+            "title": "MyLampThing",
+            "securityDefinitions": {
+                "basic_sc": {"scheme": "basic", "in":"header"}
+            },
+            "security": ["basic_sc"],
+            "properties": {
+                "status" : {
+                    "type": "string",
+                    "forms": [{"href": "https://mylamp.example.com/status"}]
+                }
+            },
+            "actions": {
+                "toggle" : {
+                    "forms": [{"href": "https://mylamp.example.com/toggle"}]
+                }
+            },
+            "events":{
+                "overheating":{
+                    "data": {"type": "string"},
+                    "forms": [{
+                        "href": "https://mylamp.example.com/oh",
+                        "subprotocol": "longpoll"
+                    }]
+                }
+            }
+        }"#;
+
+        let td: Thing = serde_json::from_str(ex1).unwrap();
+
+        println!("{:?}", td);
+    }
+    #[test]
+    fn wot_example1_no_events() {
+        let ex1 = r#"
+        {
+            "@context": "https://www.w3.org/2019/wot/td/v1",
+            "id": "urn:dev:ops:32473-WoTLamp-1234",
+            "title": "MyLampThing",
+            "securityDefinitions": {
+                "basic_sc": {"scheme": "basic", "in":"header"}
+            },
+            "security": ["basic_sc"],
+            "properties": {
+                "status" : {
+                    "type": "string",
+                    "forms": [{"href": "https://mylamp.example.com/status"}]
+                }
+            },
+            "actions": {
+                "toggle" : {
+                    "forms": [{"href": "https://mylamp.example.com/toggle"}]
+                }
+            }
+        }"#;
+
+        let td: Thing = serde_json::from_str(ex1).unwrap();
+
+        println!("{:?}", td);
     }
 }
