@@ -330,4 +330,65 @@ mod test {
 
         println!("{:?}", td);
     }
+    #[test]
+    fn wot_example4() {
+        let ex4 = r#"
+        {
+            "@context": "http://www.w3.org/ns/td",
+            "id": "urn:dev:ops:32473-WoTLamp-1234",
+            "title": "MyLampThing",
+            "securityDefinitions": {
+                "basic_sc": {
+                    "scheme": "basic",
+                    "in": "header"
+                }
+            },
+            "security": "basic_sc",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "readOnly": false,
+                    "writeOnly": false,
+                    "forms": [{
+                        "op": [
+                            "readproperty",
+                            "writeproperty"
+                        ],
+                        "href": "https://mylamp.example.com/status",
+                        "contentType": "application/json"
+                    }]
+                }
+            },
+            "actions": {
+                "toggle": {
+                    "safe": false,
+                    "idempotent": false,
+                    "forms": [{
+                        "op": "invokeaction",
+                        "href": "https://mylamp.example.com/toggle",
+                        "contentType": "application/json"
+                    }]
+                }
+            },
+            "events": {
+                "overheating": {
+                    "data": {
+                        "type": "string",
+                        "readOnly": false,
+                        "writeOnly": false
+                    },
+                    "forms": [{
+                        "op": "subscribeevent",
+                        "href": "https://mylamp.example.com/oh",
+                        "contentType": "application/json",
+                        "subprotocol": "longpoll"
+                    }]
+                }
+            }
+        }"#;
+
+        let td: Thing = serde_json::from_str(ex4).unwrap();
+
+        println!("{:?}", td);
+    }
 }
