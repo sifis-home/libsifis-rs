@@ -24,6 +24,13 @@ pub enum Hazards {
     WaterFlooding,
 }
 
+/// Categories.
+pub enum Categories {
+    Financial,
+    Privacy,
+    Safety,
+}
+
 /// Fire hazard.
 /// The execution may cause fire.
 pub fn turn_on_light() {
