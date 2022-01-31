@@ -284,4 +284,50 @@ mod test {
 
         println!("{:?}", td);
     }
+    #[test]
+    fn wot_example2() {
+        let ex2 = r#"
+        {
+            "@context": [
+                "http://www.w3.org/ns/td",
+                { "saref": "https://w3id.org/saref#" }
+            ],
+            "id": "urn:dev:ops:32473-WoTLamp-1234",
+            "title": "MyLampThing",
+            "@type": "saref:LightSwitch",
+            "securityDefinitions": {
+                "basic_sc": {"scheme": "basic", "in": "header"}
+            },
+            "security": "basic_sc",
+            "properties": {
+                "status": {
+                    "@type": "saref:OnOffState",
+                    "type": "string",
+                    "forms": [{
+                        "href": "https://mylamp.example.com/status"
+                    }]
+                }
+            },
+            "actions": {
+                "toggle": {
+                    "@type": "saref:ToggleCommand",
+                    "forms": [{
+                        "href": "https://mylamp.example.com/toggle"
+                    }]
+                }
+            },
+            "events": {
+                "overheating": {
+                    "data": {"type": "string"},
+                    "forms": [{
+                        "href": "https://mylamp.example.com/oh"
+                    }]
+                }
+            }
+        }"#;
+
+        let td: Thing = serde_json::from_str(ex2).unwrap();
+
+        println!("{:?}", td);
+    }
 }
