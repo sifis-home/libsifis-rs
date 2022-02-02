@@ -1,5 +1,5 @@
 fn main() {
-    let ctx = sifis::Context::new();
+    let ctx = sifis::Discovery::new();
 
     for thing in ctx.things() {
         println!("{:#?}", thing);
