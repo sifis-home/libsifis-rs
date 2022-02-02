@@ -130,6 +130,15 @@ pub struct Property {
     pub observable: Option<bool>,
 }
 
+impl Property {
+    pub fn attype(&self) -> Vec<&str> {
+        todo!("Mockup");
+    }
+    pub fn set<T>(&mut self, _val: T) {
+        todo!("Mockup");
+    }
+}
+
 #[derive(Clone, Deserialize, Debug)]
 pub struct Action {
     #[serde(flatten)]
@@ -185,6 +194,7 @@ pub struct Thing {
     // Let's take a value for now and assume we'll use the json-ld crate later
     #[serde(rename = "@context")]
     pub context: Value,
+    pub id: Option<String>,
     #[serde(rename = "@type")]
     pub attype: Option<OneOrMany<String>>,
     pub title: String,
@@ -204,8 +214,14 @@ pub struct Thing {
 }
 
 impl Thing {
+    pub fn attype(&self) -> Vec<&str> {
+        todo!("Mockup");
+    }
     pub fn properties(&self) -> impl Iterator<Item = (&String, &Property)> {
         self.properties.iter()
+    }
+    pub fn properties_mut(&mut self) -> impl Iterator<Item = (&String, &mut Property)> {
+        self.properties.iter_mut()
     }
     pub fn actions(&self) -> impl Iterator<Item = (&String, &Action)> {
         self.actions.iter()

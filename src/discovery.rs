@@ -16,7 +16,7 @@ fn get_thing(info: ServiceInfo) -> Result<Thing> {
 }
 
 /// Point of truth to access Things as consumer
-pub struct Context {
+pub struct Discovery {
     mdns: ServiceDaemon,
 }
 
@@ -38,13 +38,13 @@ impl Iterator for Iter {
     }
 }
 
-impl Default for Context {
+impl Default for Discovery {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Context {
+impl Discovery {
     /// Creates a new Context composed by a series of Thing.
     pub fn new() -> Self {
         let mdns = ServiceDaemon::new().expect("Cannot run the daemon");
@@ -59,5 +59,9 @@ impl Context {
             ServiceEvent::ServiceResolved(info) => Some(get_thing(info)),
             _ => None,
         })
+    }
+    /// Discovers things and interrupts the search after a certain time.
+    pub fn discover_timeout(&self) -> Result<Vec<Thing>> {
+        todo!("Implement that!");
     }
 }
