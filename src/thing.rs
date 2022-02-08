@@ -4,8 +4,6 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 
-use crate::hazard::Hazard;
-
 type MultiLanguage = HashMap<String, String>;
 type DataSchemaMap = HashMap<String, SchemaType>;
 type SecuritySchemeMap = HashMap<String, SecurityScheme>;
@@ -67,6 +65,28 @@ impl<'de> Deserialize<'de> for SchemaType {
         } else {
             Err("Error parsing DataSchema").map_err(serde::de::Error::custom)
         }
+    }
+}
+
+/// SIFIS Hazard
+///
+/// Describes a possible hazard.
+///
+/// A risk score can *only* assume values in the range [0, 10].
+/// Values outside of the defined range are invalid.
+#[derive(Clone, Deserialize, Debug)]
+pub struct Hazard {
+    #[serde(rename = "@id")]
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    #[serde(rename = "riskScore")]
+    risk_score: Option<usize>,
+}
+
+impl Hazard {
+    pub fn has_valid_risk_score(&self) -> bool {
+        self.risk_score.map_or(false, |v| (0..11).contains(&v))
     }
 }
 
