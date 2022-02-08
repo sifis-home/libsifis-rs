@@ -1,4 +1,5 @@
 mod discovery;
+mod ontology;
 mod thing;
 
 pub mod error {
@@ -6,4 +7,5 @@ pub mod error {
 }
 
 pub use discovery::*;
+pub use ontology::*;
 pub use thing::*;
