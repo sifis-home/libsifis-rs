@@ -48,35 +48,65 @@ pub enum Hazard {
     WaterFlooding,
 }
 
+impl ToString for Hazard {
+    fn to_string(&self) -> String {
+        match self {
+                Self::AirPoisoning => "AirPoisoning",
+                Self::Asphyxia => "Asphyxia",
+                Self::AudioVideoRecordAndStore => "AudioVideoRecordAndStore",
+                Self::AudioVideoStream => "AudioVideoStream",
+                Self::ElectricEnergyConsumption => "ElectricEnergyConsumption",
+                Self::Explosion => "Explosion",
+                Self::FireHazard => "FireHazard",
+                Self::GasConsumption => "GasConsumption",
+                Self::LogEnergyConsumption => "LogEnergyConsumption",
+                Self::LogUsageTime => "LogUsageTime",
+                Self::PaySubscriptionFee => "PaySubscriptionFee",
+                Self::PowerOutage => "PowerOutage",
+                Self::PowerSurge => "PowerSurge",
+                Self::RecordIssuedCommands => "RecordIssuedCommands",
+                Self::RecordUserPreferences => "RecordUserPreferences",
+                Self::SpendMoney => "SpendMoney",
+                Self::SpoiledFood => "SpoiledFood",
+                Self::TakeDeviceScreenshots => "TakeDeviceScreenshots",
+                Self::TakePictures => "TakePictures",
+                Self::UnauthorisedPhysicalAccess => "UnauthorisedPhysicalAccess",
+                Self::WaterConsumption => "WaterConsumption",
+                Self::WaterFlooding => "WaterFlooding",
+        }.to_owned()
+    }
+}
+
 impl Hazard {
+
     /// Returns the `Hazard` type associated to a Thing.
     ///
     /// It returns `None` if any type has been found for the given
     /// Thing.
     pub fn has_hazard(thing_hazard: &ThingHazard) -> Option<Self> {
         match thing_hazard.name.as_str() {
-            "AirPoisoning" => Some(Hazard::AirPoisoning),
-            "Asphyxia" => Some(Hazard::Asphyxia),
-            "AudioVideoRecordAndStore" => Some(Hazard::AudioVideoRecordAndStore),
-            "AudioVideoStream" => Some(Hazard::AudioVideoStream),
-            "ElectricEnergyConsumption" => Some(Hazard::ElectricEnergyConsumption),
-            "Explosion" => Some(Hazard::Explosion),
-            "FireHazard" => Some(Hazard::FireHazard),
-            "GasConsumption" => Some(Hazard::GasConsumption),
-            "LogEnergyConsumption" => Some(Hazard::LogEnergyConsumption),
-            "LogUsageTime" => Some(Hazard::LogUsageTime),
-            "PaySubscriptionFee" => Some(Hazard::PaySubscriptionFee),
-            "PowerOutage" => Some(Hazard::PowerOutage),
-            "PowerSurge" => Some(Hazard::PowerSurge),
-            "RecordIssuedCommands" => Some(Hazard::RecordIssuedCommands),
-            "RecordUserPreferences" => Some(Hazard::RecordUserPreferences),
-            "SpendMoney" => Some(Hazard::SpendMoney),
-            "SpoiledFood" => Some(Hazard::SpoiledFood),
-            "TakeDeviceScreenshots" => Some(Hazard::TakeDeviceScreenshots),
-            "TakePictures" => Some(Hazard::TakePictures),
-            "UnauthorisedPhysicalAccess" => Some(Hazard::UnauthorisedPhysicalAccess),
-            "WaterConsumption" => Some(Hazard::WaterConsumption),
-            "WaterFlooding" => Some(Hazard::WaterFlooding),
+                "AirPoisoning" => Some(Self::AirPoisoning),
+                "Asphyxia" => Some(Self::Asphyxia),
+                "AudioVideoRecordAndStore" => Some(Self::AudioVideoRecordAndStore),
+                "AudioVideoStream" => Some(Self::AudioVideoStream),
+                "ElectricEnergyConsumption" => Some(Self::ElectricEnergyConsumption),
+                "Explosion" => Some(Self::Explosion),
+                "FireHazard" => Some(Self::FireHazard),
+                "GasConsumption" => Some(Self::GasConsumption),
+                "LogEnergyConsumption" => Some(Self::LogEnergyConsumption),
+                "LogUsageTime" => Some(Self::LogUsageTime),
+                "PaySubscriptionFee" => Some(Self::PaySubscriptionFee),
+                "PowerOutage" => Some(Self::PowerOutage),
+                "PowerSurge" => Some(Self::PowerSurge),
+                "RecordIssuedCommands" => Some(Self::RecordIssuedCommands),
+                "RecordUserPreferences" => Some(Self::RecordUserPreferences),
+                "SpendMoney" => Some(Self::SpendMoney),
+                "SpoiledFood" => Some(Self::SpoiledFood),
+                "TakeDeviceScreenshots" => Some(Self::TakeDeviceScreenshots),
+                "TakePictures" => Some(Self::TakePictures),
+                "UnauthorisedPhysicalAccess" => Some(Self::UnauthorisedPhysicalAccess),
+                "WaterConsumption" => Some(Self::WaterConsumption),
+                "WaterFlooding" => Some(Self::WaterFlooding),
             _ => None,
         }
     }
@@ -112,56 +142,56 @@ impl Hazard {
     /// Returns the `Category`s associated to an `Hazard`.
     pub fn has_category(&self) -> Category {
         match self {
-            Self::AirPoisoning => Category::Safety,
-            Self::Asphyxia => Category::Safety,
-            Self::AudioVideoRecordAndStore => Category::Privacy,
-            Self::AudioVideoStream => Category::Privacy,
-            Self::ElectricEnergyConsumption => Category::Financial,
-            Self::Explosion => Category::Safety,
-            Self::FireHazard => Category::Safety,
-            Self::GasConsumption => Category::Financial,
-            Self::LogEnergyConsumption => Category::Privacy,
-            Self::LogUsageTime => Category::Privacy,
-            Self::PaySubscriptionFee => Category::Financial,
-            Self::PowerOutage => Category::Safety,
-            Self::PowerSurge => Category::Safety,
-            Self::RecordIssuedCommands => Category::Privacy,
-            Self::RecordUserPreferences => Category::Privacy,
-            Self::SpendMoney => Category::Financial,
-            Self::SpoiledFood => Category::Safety,
-            Self::TakeDeviceScreenshots => Category::Privacy,
-            Self::TakePictures => Category::Privacy,
-            Self::UnauthorisedPhysicalAccess => Category::Safety,
-            Self::WaterConsumption => Category::Financial,
-            Self::WaterFlooding => Category::Safety,
+                Self::AirPoisoning => Category::Safety,
+                Self::Asphyxia => Category::Safety,
+                Self::AudioVideoRecordAndStore => Category::Privacy,
+                Self::AudioVideoStream => Category::Privacy,
+                Self::ElectricEnergyConsumption => Category::Financial,
+                Self::Explosion => Category::Safety,
+                Self::FireHazard => Category::Safety,
+                Self::GasConsumption => Category::Financial,
+                Self::LogEnergyConsumption => Category::Privacy,
+                Self::LogUsageTime => Category::Privacy,
+                Self::PaySubscriptionFee => Category::Financial,
+                Self::PowerOutage => Category::Safety,
+                Self::PowerSurge => Category::Safety,
+                Self::RecordIssuedCommands => Category::Privacy,
+                Self::RecordUserPreferences => Category::Privacy,
+                Self::SpendMoney => Category::Financial,
+                Self::SpoiledFood => Category::Safety,
+                Self::TakeDeviceScreenshots => Category::Privacy,
+                Self::TakePictures => Category::Privacy,
+                Self::UnauthorisedPhysicalAccess => Category::Safety,
+                Self::WaterConsumption => Category::Financial,
+                Self::WaterFlooding => Category::Safety,
         }
     }
 
     /// Returns all `Hazard` types as immutable strings.
     pub fn all_hazards() -> &'static [&'static str] {
         &[
-            "AirPoisoning",
-            "Asphyxia",
-            "AudioVideoRecordAndStore",
-            "AudioVideoStream",
-            "ElectricEnergyConsumption",
-            "Explosion",
-            "FireHazard",
-            "GasConsumption",
-            "LogEnergyConsumption",
-            "LogUsageTime",
-            "PaySubscriptionFee",
-            "PowerOutage",
-            "PowerSurge",
-            "RecordIssuedCommands",
-            "RecordUserPreferences",
-            "SpendMoney",
-            "SpoiledFood",
-            "TakeDeviceScreenshots",
-            "TakePictures",
-            "UnauthorisedPhysicalAccess",
-            "WaterConsumption",
-            "WaterFlooding",
+                "AirPoisoning",
+                "Asphyxia",
+                "AudioVideoRecordAndStore",
+                "AudioVideoStream",
+                "ElectricEnergyConsumption",
+                "Explosion",
+                "FireHazard",
+                "GasConsumption",
+                "LogEnergyConsumption",
+                "LogUsageTime",
+                "PaySubscriptionFee",
+                "PowerOutage",
+                "PowerSurge",
+                "RecordIssuedCommands",
+                "RecordUserPreferences",
+                "SpendMoney",
+                "SpoiledFood",
+                "TakeDeviceScreenshots",
+                "TakePictures",
+                "UnauthorisedPhysicalAccess",
+                "WaterConsumption",
+                "WaterFlooding",
         ]
     }
 }
@@ -176,43 +206,57 @@ pub enum Category {
     Safety,
 }
 
+impl ToString for Category {
+    fn to_string(&self) -> String {
+        match self {
+                Self::Financial => "Financial",
+                Self::Privacy => "Privacy",
+                Self::Safety => "Safety",
+        }.to_owned()
+    }
+}
+
 impl Category {
     /// Returns all `Hazard`s associated to a `Category`.
     pub fn all_hazards(&self) -> &[Hazard] {
         match self {
-            Self::Financial => &[
-                Hazard::ElectricEnergyConsumption,
-                Hazard::GasConsumption,
-                Hazard::PaySubscriptionFee,
-                Hazard::SpendMoney,
-                Hazard::WaterConsumption,
-            ],
-            Self::Privacy => &[
-                Hazard::AudioVideoRecordAndStore,
-                Hazard::AudioVideoStream,
-                Hazard::LogEnergyConsumption,
-                Hazard::LogUsageTime,
-                Hazard::RecordIssuedCommands,
-                Hazard::RecordUserPreferences,
-                Hazard::TakeDeviceScreenshots,
-                Hazard::TakePictures,
-            ],
-            Self::Safety => &[
-                Hazard::AirPoisoning,
-                Hazard::Asphyxia,
-                Hazard::Explosion,
-                Hazard::FireHazard,
-                Hazard::PowerOutage,
-                Hazard::PowerSurge,
-                Hazard::SpoiledFood,
-                Hazard::UnauthorisedPhysicalAccess,
-                Hazard::WaterFlooding,
-            ],
+                Self::Financial => &[
+                        Hazard::ElectricEnergyConsumption,
+                        Hazard::GasConsumption,
+                        Hazard::PaySubscriptionFee,
+                        Hazard::SpendMoney,
+                        Hazard::WaterConsumption,
+                ],
+                Self::Privacy => &[
+                        Hazard::AudioVideoRecordAndStore,
+                        Hazard::AudioVideoStream,
+                        Hazard::LogEnergyConsumption,
+                        Hazard::LogUsageTime,
+                        Hazard::RecordIssuedCommands,
+                        Hazard::RecordUserPreferences,
+                        Hazard::TakeDeviceScreenshots,
+                        Hazard::TakePictures,
+                ],
+                Self::Safety => &[
+                        Hazard::AirPoisoning,
+                        Hazard::Asphyxia,
+                        Hazard::Explosion,
+                        Hazard::FireHazard,
+                        Hazard::PowerOutage,
+                        Hazard::PowerSurge,
+                        Hazard::SpoiledFood,
+                        Hazard::UnauthorisedPhysicalAccess,
+                        Hazard::WaterFlooding,
+                ],
         }
     }
 
     /// Returns all `Category` as immutable strings.
     pub fn all_categories() -> &'static [&'static str] {
-        &["Financial", "Privacy", "Safety"]
+        &[
+                "Financial",
+                "Privacy",
+                "Safety",
+        ]
     }
 }
