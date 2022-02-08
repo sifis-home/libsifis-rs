@@ -31,5 +31,4 @@ $ cargo run --example ls
 - [ ] Use thiserror instead of anyhow (once we can reason on what can go wrong)
 - [ ] webthings-set
 - [ ] webthings-get
-
-
+- [ ] Make async
