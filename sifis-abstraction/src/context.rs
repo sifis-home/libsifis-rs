@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use anyhow::{anyhow, Result};
 use sifis::{Discovery, Thing};
 
@@ -16,7 +18,7 @@ impl Context {
     pub fn _find_all<T: ConnectedObject + From<Thing>>(&self) -> Result<Vec<T>> {
         let all = self
             .discovery
-            .discover_timeout()?
+            .discover_timeout(Duration::from_secs(2))?
             .into_iter()
             .filter(|t| t.attype().contains(&T::AT_TYPE))
             .map(|t| t.into())
@@ -26,7 +28,7 @@ impl Context {
     /// Retrieves an object of a certain type using a specific identifier.
     pub fn _find<T: ConnectedObject + From<Thing>>(&self, id: &str) -> Result<T> {
         self.discovery
-            .discover_timeout()?
+            .discover_timeout(Duration::from_secs(2))?
             .into_iter()
             .filter(|co| co.attype().contains(&T::AT_TYPE))
             .find(|co| co.id.as_ref().map_or(false, |t_id| t_id == id))
