@@ -20,7 +20,7 @@ impl Context {
             .discovery
             .discover_timeout(Duration::from_secs(2))?
             .into_iter()
-            .filter(|t| t.attype().contains(&T::AT_TYPE))
+            .filter(|t| t.attype.contains(&T::AT_TYPE.to_owned()))
             .map(|t| t.into())
             .collect();
         Ok(all)
@@ -30,8 +30,8 @@ impl Context {
         self.discovery
             .discover_timeout(Duration::from_secs(2))?
             .into_iter()
-            .filter(|co| co.attype().contains(&T::AT_TYPE))
-            .find(|co| co.id.as_ref().map_or(false, |t_id| t_id == id))
+            .filter(|co| co.attype.contains(&T::AT_TYPE.to_owned()))
+            .find(|co| co.id == id)
             .map(|t| t.into())
             .ok_or_else(|| anyhow!("Not found!"))
     }

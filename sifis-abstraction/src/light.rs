@@ -13,7 +13,7 @@ impl TryFrom<Thing> for Light {
     type Error = &'static str;
 
     fn try_from(t: Thing) -> Result<Self, Self::Error> {
-        if t.attype().contains(&Light::AT_TYPE) {
+        if t.attype.contains(&Light::AT_TYPE.to_owned()) {
             Ok(Light(t))
         } else {
             Err("The Thing is not a Light!")
@@ -31,17 +31,17 @@ impl Light {
     pub fn _turn_light_on(&mut self, brightness: Percentage, color: Rgb) -> Result<()> {
         self.0
             .properties_mut()
-            .find(|p| p.1.attype().contains(&"OnOff"))
+            .find(|p| p.1.attype().contains(&"OnOff".to_owned()))
             .map(|p| p.1.set(true))
             .ok_or(anyhow!("Error"))?;
         self.0
             .properties_mut()
-            .find(|p| p.1.attype().contains(&"BrightnessProperty"))
+            .find(|p| p.1.attype().contains(&"BrightnessProperty".to_owned()))
             .map(|p| p.1.set(brightness.0))
             .ok_or(anyhow!("Error"))?;
         self.0
             .properties_mut()
-            .find(|p| p.1.attype().contains(&"ColorProperty"))
+            .find(|p| p.1.attype().contains(&"ColorProperty".to_owned()))
             .map(|p| p.1.set(color.to_string()))
             .ok_or(anyhow!("Error"))
     }
@@ -50,7 +50,7 @@ impl Light {
     pub fn _turn_light_off(&mut self) -> Result<()> {
         self.0
             .properties_mut()
-            .find(|p| p.1.attype().contains(&"OnOff"))
+            .find(|p| p.1.attype().contains(&"OnOff".to_owned()))
             .map(|p| p.1.set(false))
             .ok_or(anyhow!("Error"))
     }
