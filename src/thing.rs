@@ -121,8 +121,8 @@ pub struct Property {
 }
 
 impl Property {
-    pub fn attype(&self) -> Vec<&str> {
-        todo!("Mockup");
+    pub fn attype(&self) -> &[String] {
+        &self.affordance.attype[..]
     }
     pub fn set<T>(&mut self, _val: T) {
         todo!("Mockup");
