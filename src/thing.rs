@@ -213,9 +213,6 @@ pub struct Thing {
 }
 
 impl Thing {
-    pub fn attype(&self) -> Vec<&str> {
-        todo!("Mockup");
-    }
     pub fn properties(&self) -> impl Iterator<Item = (&String, &Property)> {
         self.properties.iter()
     }
