@@ -1,44 +1,12 @@
 use std::collections::HashMap;
 
-use serde::de::DeserializeOwned;
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
+use serde_with::{serde_as, OneOrMany};
 
 type MultiLanguage = HashMap<String, String>;
 type DataSchemaMap = HashMap<String, SchemaType>;
 type SecuritySchemeMap = HashMap<String, SecurityScheme>;
-
-#[derive(Clone, Debug)]
-pub enum OneOrMany<T>
-where
-    T: DeserializeOwned,
-{
-    One(T),
-    Many(Vec<T>),
-}
-
-impl<'de, T> Deserialize<'de> for OneOrMany<T>
-where
-    T: DeserializeOwned,
-{
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let temp = Value::deserialize(deserializer)?;
-        if let Value::Array(v) = temp {
-            let mut temp = Vec::with_capacity(v.len());
-            for t in v {
-                temp.push(serde_json::from_value(t).map_err(serde::de::Error::custom)?);
-            }
-            Ok(OneOrMany::Many(temp))
-        } else {
-            Ok(OneOrMany::One(
-                serde_json::from_value(temp).map_err(serde::de::Error::custom)?,
-            ))
-        }
-    }
-}
 
 #[derive(Clone, Debug)]
 pub enum SchemaType {
@@ -128,10 +96,12 @@ pub struct ObjectSchema {
     pub required: Option<Vec<String>>,
 }
 
+#[serde_as]
 #[derive(Clone, Deserialize, Debug)]
 pub struct Affordance {
-    #[serde(rename = "@type")]
-    pub attype: Option<OneOrMany<String>>,
+    #[serde(rename = "@type", default = "Vec::new")]
+    #[serde_as(deserialize_as = "OneOrMany<_>")]
+    pub attype: Vec<String>,
     pub title: Option<String>,
     pub titles: Option<MultiLanguage>,
     pub description: Option<String>,
@@ -207,6 +177,7 @@ fn default_content_type() -> String {
 }
 
 /// Connected thing
+#[serde_as]
 #[derive(Clone, Debug, Deserialize)]
 pub struct Thing {
     // The context can be arbitrarily complex
@@ -214,21 +185,29 @@ pub struct Thing {
     // Let's take a value for now and assume we'll use the json-ld crate later
     #[serde(rename = "@context")]
     pub context: Value,
-    pub id: Option<String>,
-    #[serde(rename = "@type")]
-    pub attype: Option<OneOrMany<String>>,
+    #[serde(default = "String::new")]
+    pub id: String,
+    #[serde(rename = "@type", default = "Vec::new")]
+    #[serde_as(deserialize_as = "OneOrMany<_>")]
+    pub attype: Vec<String>,
     pub title: String,
-    pub description: Option<String>,
-    pub base: Option<String>,
-    pub links: Option<Vec<Link>>,
-    pub forms: Option<Vec<Form>>,
+    #[serde(default = "String::new")]
+    pub description: String,
+    #[serde(default = "String::new")]
+    pub base: String,
+    #[serde(default = "Vec::new")]
+    pub links: Vec<Link>,
+    #[serde(default = "Vec::new")]
+    pub forms: Vec<Form>,
     #[serde(default = "HashMap::new")]
     properties: HashMap<String, Property>,
     #[serde(default = "HashMap::new")]
     actions: HashMap<String, Action>,
     #[serde(default = "HashMap::new")]
     events: HashMap<String, Event>,
-    pub security: Option<OneOrMany<String>>,
+    #[serde(default = "Vec::new")]
+    #[serde_as(deserialize_as = "OneOrMany<_>")]
+    pub security: Vec<String>,
     #[serde(rename = "securityDefinitions")]
     pub security_definitions: SecuritySchemeMap,
 }
