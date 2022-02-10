@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 use serde_with::{serde_as, OneOrMany};
 
@@ -124,7 +124,12 @@ impl Property {
     pub fn attype(&self) -> &[String] {
         &self.affordance.attype[..]
     }
-    pub fn set<T>(&mut self, _val: T) {
+
+    pub fn set<T: ?Sized + Serialize>(&self, _val: &T) -> anyhow::Result<()> {
+        todo!("Mockup");
+    }
+
+    pub fn get<'a, T: Deserialize<'a>>(&'a self) -> anyhow::Result<T> {
         todo!("Mockup");
     }
 }
