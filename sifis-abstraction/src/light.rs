@@ -30,28 +30,36 @@ impl Light {
     ///   The execution may cause fire
     pub fn _turn_light_on(&mut self, brightness: Percentage, color: Rgb) -> Result<()> {
         self.0
-            .properties_mut()
+            .properties
+            .iter_mut()
             .find(|p| p.1.attype().contains(&"OnOff".to_owned()))
-            .map(|p| p.1.set(true))
+            .map(|p| p.1.set(&true).ok())
+            .flatten()
             .ok_or(anyhow!("Error"))?;
         self.0
-            .properties_mut()
+            .properties
+            .iter_mut()
             .find(|p| p.1.attype().contains(&"BrightnessProperty".to_owned()))
-            .map(|p| p.1.set(brightness.0))
+            .map(|p| p.1.set(&brightness.0).ok())
+            .flatten()
             .ok_or(anyhow!("Error"))?;
         self.0
-            .properties_mut()
+            .properties
+            .iter_mut()
             .find(|p| p.1.attype().contains(&"ColorProperty".to_owned()))
-            .map(|p| p.1.set(color.to_string()))
+            .map(|p| p.1.set(&color.to_string()).ok())
+            .flatten()
             .ok_or(anyhow!("Error"))
     }
 
     /// Turns a light off.
     pub fn _turn_light_off(&mut self) -> Result<()> {
         self.0
-            .properties_mut()
+            .properties
+            .iter_mut()
             .find(|p| p.1.attype().contains(&"OnOff".to_owned()))
-            .map(|p| p.1.set(false))
+            .map(|p| p.1.set(&false).ok())
+            .flatten()
             .ok_or(anyhow!("Error"))
     }
 }

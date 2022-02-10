@@ -32,28 +32,36 @@ impl Oven {
     ///   The execution authorises the app to obtain a video stream with audio
     pub fn _turn_oven_on(&mut self, temperature: Percentage, enable_camera: bool) -> Result<()> {
         self.0
-            .properties_mut()
+            .properties
+            .iter_mut()
             .find(|p| p.1.attype().contains(&"OnOff".to_owned()))
-            .map(|p| p.1.set(true))
+            .map(|p| p.1.set(&true).ok())
+            .flatten()
             .ok_or(anyhow!("Error"))?;
         self.0
-            .properties_mut()
+            .properties
+            .iter_mut()
             .find(|p| p.1.attype().contains(&"Temperature".to_owned()))
-            .map(|p| p.1.set(temperature.0))
+            .map(|p| p.1.set(&temperature.0).ok())
+            .flatten()
             .ok_or(anyhow!("Error"))?;
         self.0
-            .properties_mut()
+            .properties
+            .iter_mut()
             .find(|p| p.1.attype().contains(&"Camera".to_owned()))
-            .map(|p| p.1.set(enable_camera))
+            .map(|p| p.1.set(&enable_camera).ok())
+            .flatten()
             .ok_or(anyhow!("Error"))
     }
 
     /// Turns an oven off.
     pub fn _turn_oven_off(&mut self) -> Result<()> {
         self.0
-            .properties_mut()
+            .properties
+            .iter_mut()
             .find(|p| p.1.attype().contains(&"OnOff".to_owned()))
-            .map(|p| p.1.set(false))
+            .map(|p| p.1.set(&false).ok())
+            .flatten()
             .ok_or(anyhow!("Error"))
     }
 }
