@@ -33,23 +33,23 @@ impl Oven {
     pub fn _turn_oven_on(&mut self, temperature: Percentage, enable_camera: bool) -> Result<()> {
         self.0
             .properties
-            .iter_mut()
-            .find(|p| p.1.attype().contains(&"OnOff".to_owned()))
-            .map(|p| p.1.set(&true).ok())
+            .values()
+            .find(|p| p.attype().contains(&"OnOff".to_owned()))
+            .map(|p| p.set(&true).ok())
             .flatten()
             .ok_or(anyhow!("Error"))?;
         self.0
             .properties
-            .iter_mut()
-            .find(|p| p.1.attype().contains(&"Temperature".to_owned()))
-            .map(|p| p.1.set(&temperature.0).ok())
+            .values()
+            .find(|p| p.attype().contains(&"Temperature".to_owned()))
+            .map(|p| p.set(&temperature.0).ok())
             .flatten()
             .ok_or(anyhow!("Error"))?;
         self.0
             .properties
-            .iter_mut()
-            .find(|p| p.1.attype().contains(&"Camera".to_owned()))
-            .map(|p| p.1.set(&enable_camera).ok())
+            .values()
+            .find(|p| p.attype().contains(&"Camera".to_owned()))
+            .map(|p| p.set(&enable_camera).ok())
             .flatten()
             .ok_or(anyhow!("Error"))
     }
@@ -58,9 +58,9 @@ impl Oven {
     pub fn _turn_oven_off(&mut self) -> Result<()> {
         self.0
             .properties
-            .iter_mut()
-            .find(|p| p.1.attype().contains(&"OnOff".to_owned()))
-            .map(|p| p.1.set(&false).ok())
+            .values()
+            .find(|p| p.attype().contains(&"OnOff".to_owned()))
+            .map(|p| p.set(&false).ok())
             .flatten()
             .ok_or(anyhow!("Error"))
     }
