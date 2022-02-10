@@ -33,14 +33,14 @@ impl Light {
             .properties
             .values()
             .find(|p| p.attype().contains(&"OnOff".to_owned()))
-            .map(|p| p.set(&true).ok())
+            .map(|p| p.set(true).ok())
             .flatten()
             .ok_or(anyhow!("Error"))?;
         self.0
             .properties
             .values()
             .find(|p| p.attype().contains(&"BrightnessProperty".to_owned()))
-            .map(|p| p.set(&brightness.0).ok())
+            .map(|p| p.set(brightness.0).ok())
             .flatten()
             .ok_or(anyhow!("Error"))?;
         self.0
@@ -58,7 +58,7 @@ impl Light {
             .properties
             .values()
             .find(|p| p.attype().contains(&"OnOff".to_owned()))
-            .map(|p| p.set(&false).ok())
+            .map(|p| p.set(false).ok())
             .flatten()
             .ok_or(anyhow!("Error"))
     }
