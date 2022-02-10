@@ -121,8 +121,8 @@ pub struct Property {
 }
 
 impl Property {
-    pub fn attype(&self) -> &[String] {
-        &self.affordance.attype[..]
+    pub fn has_attype(&self, has_attype: &str) -> bool {
+        self.affordance.attype.contains(&has_attype.to_owned())
     }
 
     pub fn set<T: Serialize>(&self, _val: T) -> anyhow::Result<()> {
