@@ -205,31 +205,16 @@ pub struct Thing {
     #[serde(default = "Vec::new")]
     pub forms: Vec<Form>,
     #[serde(default = "HashMap::new")]
-    properties: HashMap<String, Property>,
+    pub properties: HashMap<String, Property>,
     #[serde(default = "HashMap::new")]
-    actions: HashMap<String, Action>,
+    pub actions: HashMap<String, Action>,
     #[serde(default = "HashMap::new")]
-    events: HashMap<String, Event>,
+    pub events: HashMap<String, Event>,
     #[serde(default = "Vec::new")]
     #[serde_as(deserialize_as = "OneOrMany<_>")]
     pub security: Vec<String>,
     #[serde(rename = "securityDefinitions")]
     pub security_definitions: SecuritySchemeMap,
-}
-
-impl Thing {
-    pub fn properties(&self) -> impl Iterator<Item = (&String, &Property)> {
-        self.properties.iter()
-    }
-    pub fn properties_mut(&mut self) -> impl Iterator<Item = (&String, &mut Property)> {
-        self.properties.iter_mut()
-    }
-    pub fn actions(&self) -> impl Iterator<Item = (&String, &Action)> {
-        self.actions.iter()
-    }
-    pub fn events(&self) -> impl Iterator<Item = (&String, &Event)> {
-        self.events.iter()
-    }
 }
 
 #[cfg(test)]
