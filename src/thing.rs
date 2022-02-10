@@ -125,7 +125,7 @@ impl Property {
         &self.affordance.attype[..]
     }
 
-    pub fn set<T: ?Sized + Serialize>(&self, _val: &T) -> anyhow::Result<()> {
+    pub fn set<T: Serialize>(&self, _val: T) -> anyhow::Result<()> {
         todo!("Mockup");
     }
 
