@@ -217,6 +217,12 @@ pub struct Thing {
     pub security_definitions: SecuritySchemeMap,
 }
 
+impl Thing {
+    pub fn has_attype(&self, has_attype: &str) -> bool {
+        self.attype.contains(&has_attype.to_owned())
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
